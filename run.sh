@@ -1,0 +1,1 @@
+torchrun --nproc_per_node 1 example.py --ckpt_dir /mnt/d/Torrents/LLaMA/LLaMA/7B --tokenizer_path /mnt/d/Torrents/LLaMA/LLaMA/tokenizer.model

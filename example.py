@@ -78,54 +78,97 @@ def load(
     return generator
 
 
+# Original Values
+# MAX_SEQ_LEN = 512
+
+# Modified Values
+MAX_SEQ_LEN = 40
+
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
     temperature: float = 0.8,
     top_p: float = 0.95,
-    max_seq_len: int = 512,
+    max_seq_len: int = MAX_SEQ_LEN,
     max_batch_size: int = 16,
 ):
     generator = load(ckpt_dir, tokenizer_path, max_seq_len, max_batch_size)
 
-    prompts = [
-        # For these prompts, the expected answer is the natural continuation of the prompt
-        "I believe the meaning of life is",
-        "Simply put, the theory of relativity states that ",
-        "Building a website can be done in 10 simple steps:\n",
-        # Few shot prompts: https://huggingface.co/blog/few-shot-learning-gpt-neo-and-inference-api
-        """Tweet: "I hate it when my phone battery dies."
-Sentiment: Negative
-###
-Tweet: "My day has been 👍"
-Sentiment: Positive
-###
-Tweet: "This is the link to the article"
-Sentiment: Neutral
-###
-Tweet: "This new music video was incredibile"
-Sentiment:""",
-        """Translate English to French:
+#     prompts = [
+#         # For these prompts, the expected answer is the natural continuation of the prompt
+#         "I believe the meaning of life is",
+#         "Simply put, the theory of relativity states that ",
+#         "Building a website can be done in 10 simple steps:\n",
+#         # Few shot prompts: https://huggingface.co/blog/few-shot-learning-gpt-neo-and-inference-api
+#         """Tweet: "I hate it when my phone battery dies."
+# Sentiment: Negative
+# ###
+# Tweet: "My day has been 👍"
+# Sentiment: Positive
+# ###
+# Tweet: "This is the link to the article"
+# Sentiment: Neutral
+# ###
+# Tweet: "This new music video was incredibile"
+# Sentiment:""",
+#         """Translate English to French:
 
-sea otter => loutre de mer
+# sea otter => loutre de mer
 
-peppermint => menthe poivrée
+# peppermint => menthe poivrée
 
-plush girafe => girafe peluche
+# plush girafe => girafe peluche
 
-cheese =>""",
-    ]
-    results = generator.generate(
-        prompts, max_gen_len=max_seq_len, temperature=temperature, top_p=top_p
-    )
+# cheese =>""",
+#     ]
+    while True:
+        # catch any keyboard interrupts and continue with a new prompt
+        try:
+            prompt = input("Enter prompt: ")
+            if prompt == "exit":
+                break
+            results = generator.generate(
+                [prompt], max_gen_len=max_seq_len, temperature=temperature, top_p=top_p
+            )
 
-    for result in results:
-        print("\n==================================\n")
-        print(result)
-        print("\n==================================\n")
+            for result in results:
+                print("\n==================================\n")
+                print(result)
+                print("\n==================================\n")
 
-    with open('example-output.json', 'w') as f:
-        json.dump(results, f)
+            with open('example-output.json', 'w') as f:
+                json.dump(results, f)
+        except KeyboardInterrupt:
+            continue
+        # print(generator.generate(prompt, temperature=temperature, top_p=top_p))
+#     prompts = [
+#         # For these prompts, the expected answer is the natural continuation of the prompt
+#         "I believe the meaning of life is",
+#         "Simply put, the theory of relativity states that ",
+#         "Building a website can be done in 10 simple steps:\n",
+#         # Few shot prompts: https://huggingface.co/blog/few-shot-learning-gpt-neo-and-inference-api
+#         """Tweet: "I hate it when my phone battery dies."
+# Sentiment: Negative
+# ###
+# Tweet: "My day has been 👍"
+# Sentiment: Positive
+# ###
+# Tweet: "This is the link to the article"
+# Sentiment: Neutral
+# ###
+# Tweet: "This new music video was incredibile"
+# Sentiment:""",
+#         """Translate English to French:
+
+# sea otter => loutre de mer
+
+# peppermint => menthe poivrée
+
+# plush girafe => girafe peluche
+
+# cheese =>""",
+#     ]
+        
 
 
 if __name__ == "__main__":
